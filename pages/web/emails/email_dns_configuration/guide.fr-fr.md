@@ -61,13 +61,13 @@ Les enregistrement MX (**M**ail e**X**change) permettent de relier votre nom de 
 
 Lorsque l'adresse **sender@otherdomain.ovh** envoie un e-mail vers **contact@mydomain.ovh**, le serveur qui envoie l'e-mail (Outgoing mail server) va intérroger la zone DNS du nom de domaine **mydomain.ovh** et récupérer les enregistrements **MX** pour délivrer l'e-mail.
 
-![email](images/email-dns-conf-mx01.png){.thumbnail .w-640}
+![email](images/email-dns-conf-mx01.png){.thumbnail}
 
 L'e-mail sera envoyer vers l'URL **mx0.mail.ovh.net** qui est précédée de la valeur **0**. Cette valeur est appellé priorité, la plus faible est intérrogé en premier et la plus élevée en dernier. Cela signifie que la présence de plusieurs enregistrements permet de pallier une absence de réponse de l'enregistrement MX ayant la plus faible priorité.
 
 Voici à quoi ressemble l'ajout de cet enregistrement MX dans la zone DNS:
 
-![email](images/email-dns-conf-mx02.png){.thumbnail}
+![email](images/email-dns-conf-mx02.png){.thumbnail .w-640}
 
 > Pour configurer vos enregistrements MX dans votre zone DNS, consultez notre guide [Ajouter un champ MX à la configuration de son nom de domaine](https://docs.ovh.com/fr/domains/mail-mutualise-guide-de-configuration-mx-avec-zone-dns-ovh/)
 
