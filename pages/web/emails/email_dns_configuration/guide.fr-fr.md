@@ -19,7 +19,7 @@ updated: 2023-03-29
 
 Lorsque vous commandez un service e-mail, vous devez l'associer à l'un de vos noms de domaine. Pour que votre service e-mail fonctionne avec votre nom de domaine, une configuration DNS est nécessaire. Plus particulièrement, la [zone DNS](https://docs.ovh.com/fr/domains/editer-ma-zone-dns/) de votre nom de domaine.
 
-Il existe plusieurs types d'enregistrement DNS associés à la configuration d'un service e-mail OVHcloud. Dans ce guide, nous allons aborder chacuns de ces enregistrements et leur utilité.
+Il existe plusieurs types d'enregistrement DNS associés à la configuration d'un service e-mail OVHcloud. Dans ce guide, nous allons aborder chacun de ces enregistrements et leurs utilités.
 
 **Découvrez comment configurer votre zone DNS pour votre servie e-mail.**
 
@@ -37,21 +37,26 @@ Il existe plusieurs types d'enregistrement DNS associés à la configuration d'u
 
 Votre plateforme e-mail est composée de différents « services » pour former un ensemble fonctionnel :
 
-- **le compte** (Account) : il se matérialise par le nom qui précède le « @ ». Il désigne un utilisateur.
-- **le nom de domaine associé** (Associated domain) : il se matérialise par le nom qui suit le « @ ». Il désigne un groupe d'utilisateurs et permet la diffusion vers internet.
-- **le serveur e-mail sortant** (Outgoing mail server) : il permet d'émettre les e-mails vers une autre adresse e-mail.
-- **le serveur e-mail entrant** (Incoming mail server) : il permet la réception et le traitement des e-mails à livrer aux comptes de la plateforme.
-- **configuration automatique** (Autoconfiguration) : ces paramètres permettent de configurer automatiquement votre adresse e-mail sur vote logiciel de messagerie.
+- **le compte** (Account) : matérialisé par le nom qui précède le « @ ». Il désigne un utilisateur.
+- **le nom de domaine associé** (Associated domain) : matérialisé par le nom qui suit le « @ ». Il désigne un groupe d'utilisateurs et permet la diffusion vers internet.
+- **le serveur e-mail sortant** (Outgoing mail server) : permet d'émettre les e-mails vers une autre adresse e-mail.
+- **le serveur e-mail entrant** (Incoming mail server) : permet la réception et le traitement des e-mails à livrer aux comptes de la plateforme.
+- **configuration automatique** (Autoconfiguration) : ses paramètres permettent de configurer automatiquement votre adresse e-mail sur votre logiciel de messagerie.
 - **Sécurité** (Security) : éléments permettant de sécuriser les échanges entre l'émetteur et le récepteur pour éviter l'usurpation et la diffusion de courrier indésirable.
 
 Certains de ces services dépendent des serveurs DNS du nom de domaine associé à votre plateforme e-mail et nécessitent une configuration de la zone DNS:
 
+> [!primary]
+> 
+> Les entrées DNS ci-dessous sont décrites uniquement pour leur utilisation avec un service mail OVHcloud. En effet, certaines de ces entrées peuvent être utilisées dans d'autres circonstances.
+>
+
 - [**MX**](#mx) : enregistrement DNS relatif à la réception des e-mails.
-- [**CNAME**](#cname) : enregistrement DNS temporaire permettant d'authentifier le nom de domaine sur la plateforme e-mail
+- [**CNAME**](#cname) : enregistrement DNS temporaire permettant d'authentifier le nom de domaine sur la plateforme e-mail. Cette entrée DNS est tilisée comme un "token" de contrôle.
 - [**SRV**](#srv) : enregistrement DNS permettant la configuration automatique d'une adresse e-mail sur un logiciel de messagerie.
 - [**SPF**](#spf) : enregistrement DNS relatif à l'authentification du nom de domaine.
 - [**DKIM**](#dkim) : enregistrement DNS relatif à l'authentification du contenu d'un e-mail.
-- [**DMARC**](#dmarc) : enregistrement DNS d'authentification des e-mails envoyés utilisant les méthodes SPF et DKIM.
+- [**DMARC**](#dmarc) : enregistrement DNS d'authentification des e-mails envoyés utilisant les méthodes SPF et DKIM. Nécessite qu'un champ SPF et DKIM soit déjà configuré pour fonctionner correctement
 
 ![email](images/email-dns-conf01.png){.thumbnail}
 
@@ -63,7 +68,7 @@ Lorsque l'adresse **sender@otherdomain.ovh** envoie un e-mail vers **contact@myd
 
 ![email](images/email-dns-conf-mx01.png){.thumbnail}
 
-L'e-mail sera envoyer vers l'URL **mx0.mail.ovh.net** qui est précédée de la valeur **0**. Cette valeur est appellé priorité, la plus faible est intérrogé en premier et la plus élevée en dernier. Cela signifie que la présence de plusieurs enregistrements permet de pallier une absence de réponse de l'enregistrement MX ayant la plus faible priorité.
+L'e-mail sera envoyé vers la cible **mx0.mail.ovh.net** qui est précédée de la valeur **0**. Cette valeur est appellée priorité, la plus faible est intérrogée en premier et la plus élevée en dernier. Cela signifie que la présence de plusieurs enregistrements permet de pallier une absence de réponse de l'enregistrement MX ayant la plus faible priorité.
 
 Voici à quoi ressemble l'ajout de cet enregistrement MX dans la zone DNS:
 
@@ -73,15 +78,15 @@ Voici à quoi ressemble l'ajout de cet enregistrement MX dans la zone DNS:
 
 ### Enregistrement CNAME <a name="cname"></a>
 
-L'enregistrement CNAME est utilisé en temps qu'alias, il pointe vers une URL qui pointe elle-même vers une adresse IP. Ça n'est donc pas un enregistrement lié à un service e-mail par nature.
+L'enregistrement CNAME est utilisé ici en temps qu'alias, il pointe vers une cible qui pointe elle-même vers une adresse IP. Ça n'est donc pas un enregistrement lié à un service e-mail par nature.
 
-Dans le cadre de nos offres [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/) et [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/), cet enregistrement CNAME est utilisé pour définir un code de validation qui sera visible dans la zone DNS du nom de domaine à valider. Le but est de vérifier que l'utilisateur de la plateforme e-mail a bien la main sur le nom de domaine qu'il ajoute. 
+Dans le cadre de nos offres [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/) et [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/), cet enregistrement CNAME est utilisé pour définir un code de validation (token) qui sera visible dans la zone DNS du nom de domaine à valider. Le but est de vérifier que l'utilisateur de la plateforme e-mail a bien la main sur le nom de domaine qu'il ajoute. 
 
 > [!primary]
 >
 > Si le nom de domaine ajouté est géré dans le même espace client que la plateforme e-mail, il n'y a pas d'enregistrement CNAME à configurer.
 
-Comme décrit dans le schéma ci-dessous, lorsque l'on ajoute le nom de domaine **mydomain.ovh** à sa plateforme e-mail. Un code de validation est généré par la plateforme, « ***abcd1-check*** » dans notre exemple. Ce code doit être ajouté sous la forme d'un enregistrement CNAME dans la zone DNS du nom de domaine.
+Comme décrit dans le schéma ci-dessous, lorsqu'on ajoute le nom de domaine **mydomain.ovh** à sa plateforme e-mail. Un code de validation est généré par la plateforme, « ***abcd1-check*** » dans notre exemple. Ce code doit être ajouté sous la forme d'un enregistrement CNAME dans la zone DNS du nom de domaine.
 
 ![email](images/email-dns-conf-cname01.png){.thumbnail}
 
@@ -95,9 +100,19 @@ Le code doit être ajouté en tant que sous-domaine lors de l'ajout de l'enregis
 
 Le rôle de l'enregistrement SRV est d'orienter la requête vers un service en lui indiquant le protocole et le port à utiliser.
 
-Dans le cadre de nos offres [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/) et [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/), c'est le service de découverte « **autodiscover** » qui est utilisé en passant par le protocole **TCP** via le **port 443** (port SLL sécurisé).
+Dans le cadre de nos offres [**Hosted Exchange**](https://www.ovhcloud.com/fr/emails/hosted-exchange/) et [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/), c'est le service de découverte « **autodiscover** » qui est utilisé en passant par le protocole **TCP** via le **port 443** (port SSL sécurisé).
 
 Exemple, vous configurez pour la première fois votre adresse [**Email Pro**](https://www.ovhcloud.com/fr/emails/email-pro/) **contact@mydomain.ovh** sur votre logiciel de messagerie (Firefox, Mail de macOS, Outlook, etc.), le logiciel vous propose de la configurer automatiquement ou manuellement. En choisissant la configuration automatique (automatic configuration), le logiciel va intérroger l'enregistrement SRV utilisant le service « autodiscover » qui lui transmettra l'URL du serveur e-mail **pro1.mail.ovh.net**.
+
+>[!warning]
+>
+> Les logiciels de messagerie peuvent parfois prioriser à l'enregistrement SRV l'appel d'un enregistrement CNAME. En effet, les champs CNAME peuvent aussi permettrent de l'auto-configuration.
+> 
+> Si vous utilisez le champs SRV, vérifiez dans votre zone DNS que l'une des deux entrées suivantes n'est pas présente :
+> 
+>  - autoconfig.YourDomain.tld IN CNAME ssl0.ovh.net.
+>  - autodiscover.YourDomain.tld IN CNAME ssl0.ovh.net.
+>  
 
 ![email](images/email-dns-conf-srv01.png){.thumbnail}
 
@@ -125,7 +140,7 @@ Lors de la configuration de votre enregistrement SPF, il est important de lister
 
 L'enregistrement DKIM (**D**omain**K**eys **I**dentified **M**ail) permet de signer les e-mails pour éviter l'usurpation de celles-ci. Cette signature fonctionne sur le principe de clé privée / clé publique.
 
-Lorsque vous envoyez un e-mail depuis **contact@mydomain.ovh**, une signature cryptée à l'aide d'une clé privée (private key) est ajoutée dans l'entête de l'e-mail. Le destinataire **recipient@otherdomain.ovh** pourra décrypter cette signature avec la clé publique (Public key) visible dans la zone DNS de **mydomain.ovh**. La signature est créée à partir du contenu de l'e-mail envoyé, cela signifie que si l'e-mail est modifié lors du transit, la signature ne correspondra pas avec le contenu ce qui provoquera l'échec de la vérification DKIM sur le serveur destinataire.
+Lorsque vous envoyez un e-mail depuis **contact@mydomain.ovh**, une signature cryptée à l'aide d'une clé privée (private key) est ajoutée dans l'entête de l'e-mail. Le destinataire **recipient@otherdomain.ovh** pourra déchiffrer cette signature avec la clé publique (Public key) visible dans la zone DNS de **mydomain.ovh**. La signature est créée à partir du contenu de l'e-mail envoyé, cela signifie que si l'e-mail est modifié lors du transit, la signature ne correspondra pas avec le contenu : ce qui provoquera l'échec de la vérification DKIM sur le serveur destinataire.
 
 ![email](images/email-dns-conf-dkim.png){.thumbnail}
 
@@ -141,6 +156,8 @@ Exemple, lorsque vous envoyez un e-mail depuis **contact@mydomain.ovh** vers l'a
 
 ## Aller plus loin
 
+Pour des prestations spécialisées (référencement, développement, etc), contactez les [partenaires OVHcloud](https://partner.ovhcloud.com/fr/directory/).
+
 Si vous souhaitez bénéficier d'une assistance à l'usage et à la configuration de vos solutions OVHcloud, nous vous proposons de consulter nos différentes [offres de support](https://www.ovhcloud.com/fr/support-levels/).
 
-Échangez avec notre communauté d'utilisateurs sur <https://community.ovh.com/>.
+Échangez avec notre communauté d'utilisateurs sur <https://community.ovh.com>.
